@@ -83,8 +83,8 @@
     <div style="margin-top: 20px; font-size: 1.2em">
       現在の残高:
       <span
-        th:text="${#aggregates.sum(list.?[type == 'income'].![amount]) ?: 0 
-                  - (#aggregates.sum(list.?[type == 'expense'].![amount]) ?: 0)}"
+        th:text="${(#aggregates.sum(list.?[type == 'income'].![amount]) ?: 0) 
+              - (#aggregates.sum(list.?[type == 'expense'].![amount]) ?: 0)}"
       ></span
       >円
     </div>

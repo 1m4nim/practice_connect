@@ -1,29 +1,17 @@
 package com.example.practice;
 
-import java.time.LocalDate;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
-import jakarta.persistence.GeneratedValue; 
-import jakarta.persistence.GenerationType; 
 
 @Entity
 @Data
 public class Spending {
-    
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String type;     // これが重要！ HTMLの th:field="*{type}" と紐付きます
     private String title;
-
     private Integer amount;
-
     private String category;
-
-    private LocalDate date;
-
-    private String type;
-
 }
