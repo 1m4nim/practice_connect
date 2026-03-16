@@ -24,4 +24,6 @@ public class Spending {
 
     private LocalDate date;
 
+    private String type;
+
 }

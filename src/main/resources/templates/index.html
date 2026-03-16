@@ -1,0 +1,92 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>マイ家計簿</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 40px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background: #f4f4f4;
+      }
+      form {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>マイ家計簿</h1>
+
+    <form th:action="@{/add}" th:object="${spending}" method="post">
+      種類:
+      <select th:field="*{type}">
+        <option value="expense">支出</option>
+        <option value="income">収入</option>
+      </select>
+      品目: <input type="text" th:field="*{title}" required /> 金額:
+      <input type="number" th:field="*{amount}" required /> カテゴリ:
+      <input type="text" th:field="*{category}" />
+      <button type="submit">保存する</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>種類</th>
+          <th>品目</th>
+          <th>金額</th>
+          <th>カテゴリ</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="s : ${list}">
+          <td th:text="${s.type == 'income' ? '収入' : '支出'}"></td>
+          <td th:text="${s.title}"></td>
+          <td
+            th:text="${(s.type == 'income' ? '+' : '-') + s.amount + '円'}"
+          ></td>
+          <td th:text="${s.category}"></td>
+          <td>
+            <form
+              th:action="@{/delete/{id}(id=${s.id})}"
+              method="post"
+              style="display: inline; margin: 0; padding: 0"
+            >
+              <button
+                type="submit"
+                onclick="return confirm('本当に削除しますか？');"
+              >
+                削除
+              </button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top: 20px; font-size: 1.2em">
+      現在の残高:
+      <span
+        th:text="${#aggregates.sum(list.?[type == 'income'].![amount]) ?: 0 
+                  - (#aggregates.sum(list.?[type == 'expense'].![amount]) ?: 0)}"
+      ></span
+      >円
+    </div>
+  </body>
+</html>
