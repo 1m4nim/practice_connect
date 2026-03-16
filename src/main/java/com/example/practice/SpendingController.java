@@ -1,34 +1,36 @@
 package com.example.practice;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
-@RestController
+@Controller
 public class SpendingController {
-    
+
     @Autowired
     private SpendingRepository repository;
 
-    // ブラウザで http://localhost:8080/test にアクセスすると実行される
-    @GetMapping("/test")
-    public String testSave() {
-        Spending s = new Spending();
-        s.setTitle("ランチ");
-        s.setAmount(1000);
-        s.setCategory("食費");
-        
-        repository.save(s); // DBに保存！
-        
-        return "保存しました！";
+    // 家計簿の一覧表示
+    @GetMapping("/")
+    public String index(Model model) {
+        model.addAttribute("list", repository.findAll());
+        model.addAttribute("spending", new Spending()); // 入力フォーム用
+        return "index"; // index.htmlを呼び出す
     }
 
-    // 保存された全データを見るためのURL
-    @GetMapping(value="/list", produces = "application/json; charset=utf-8")
-    public List<Spending> getAll() {
-        return repository.findAll();
+    // データの保存処理
+    @PostMapping("/add")
+    public String add(Spending spending) {
+        repository.save(spending);
+        return "redirect:/"; // 保存したら一覧に戻る
     }
 
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Long id) {
+        repository.deleteById(id);
+        return "redirect:/"; // 削除したら一覧にリダイレクト
+    }
 }
